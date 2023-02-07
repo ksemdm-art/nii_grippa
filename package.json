@@ -14,7 +14,9 @@
     "@strapi/plugin-users-permissions": "4.5.6",
     "@strapi/strapi": "4.5.6",
     "better-sqlite3": "7.4.6",
-    "strapi-utils": "^3.6.11"
+    "strapi-plugin-import-export-content": "^0.4.2",
+    "strapi-utils": "^3.6.11",
+    "vue-router": "^4.1.6"
   },
   "author": {
     "name": "A Strapi developer"

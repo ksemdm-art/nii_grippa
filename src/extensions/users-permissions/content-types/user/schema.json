@@ -70,19 +70,20 @@
     "userFathersname": {
       "type": "string"
     },
-    "organizations": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::organization.organization"
-    },
     "fullName": {
       "type": "string"
     },
-    "order": {
+    "orders": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "oneToMany",
       "target": "api::order.order",
       "mappedBy": "user"
+    },
+    "organization": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::organization.organization",
+      "inversedBy": "user"
     }
   }
 }

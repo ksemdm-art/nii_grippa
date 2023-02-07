@@ -12,18 +12,15 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "OrderDate": {
-      "type": "date",
-      "required": true
-    },
     "OrderStatus": {
       "type": "boolean",
       "required": true
     },
-    "services": {
+    "service": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::service.service"
+      "target": "api::service.service",
+      "mappedBy": "order"
     },
     "OrderName": {
       "type": "string",
@@ -39,9 +36,23 @@
     },
     "user": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "order"
+      "inversedBy": "orders"
+    },
+    "orderResult": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "fileName": {
+      "type": "string"
     }
   }
 }
