@@ -117,8 +117,9 @@
                                             </div>
 
                                             <div class="col-sm-3 text-secondary">
-                                                <a v-bind:href="'http://localhost:1337' + getLinkByID(order.id)"
-                                                    v-if="getLinkByID(order.id) != ''">Данные результата</a>
+                                                <!-- <a v-bind:href="`http://localhost:1337` + getLinkByID(order.id)"
+                                                    v-if="getLinkByID(order.id) != ''">Данные результата</a> -->
+                                                   <a v-for="file in getLinksById(order.id)" :key="file.id" :href="file.fileName"> Данные результата {{ file.id }}<br></a>
                                             </div>
                                         </div>
                                         <hr>
@@ -155,7 +156,7 @@
                                     data-bs-toggle="dropdown" aria-expanded="false">
                                     Услуги
                                 </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style="width:300px">
                                     <div v-for="service in serviceData" :key="service.id" class="row"
                                         id="v-model-multiple-checkboxes">
                                         <div v-show="service.attributes.ServiceStatus" class="form-check"
@@ -178,14 +179,14 @@
                                     id="inputGroupFile02">
                             </div>
                             <div class="wrapper" style="display: flex; flex-direction: row; justify-content: end;">
-                                <button type="submit" class="btn btn-secondary" @click="sendFile()">Загрузить</button>
+                                <!--KS-FIXED: type=submit переделан в type=button --><button type="button" class="btn btn-secondary" @click="sendFile()">Загрузить</button>
                             </div>
                         </form>
 
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                        <button @click="sendOrder()" type="submit" class="btn btn-primary">Отправить</button>
+                        <!--KS-FIXED: type=submit переделан в type=button --><button @click="sendOrder()" type="button" class="btn btn-primary">Отправить</button>
                     </div>
                 </div>
             </div>
@@ -203,6 +204,7 @@ import axios from 'axios'
 //import store from '../store';
 import { mapActions } from 'vuex';
 //import { ref } from 'vue';
+
 
 
 
@@ -225,8 +227,8 @@ export default {
 
     async created() {
 
-        //http://localhost:1337/api/users/${user.id}?populate=*
-        const res = await axios.get('http://localhost:8080/#/profile',
+        //https://gen.influenza.spb.ru/api/users/${user.id}?populate=*
+        const res = await axios.get(`${process.env.VUE_APP_URL}/#/profile`,
             {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('jwt')
@@ -240,9 +242,10 @@ export default {
             localStorage.removeItem('jwt')
             this.$router.push('/login')
         },
-        getLinkByID(id) {
+        getLinksById(id) {
             const order = JSON.parse(JSON.stringify(Object.values(this.orderData).filter(order => order.id == id)[0]))
-            return (order.attributes.orderResult.data || ([{ attributes: { url: "" } }]))[0].attributes.url
+            console.log("links", order.attributes.results)
+            return order.attributes.results
         },
 
         formatDate(id) {
@@ -268,7 +271,7 @@ export default {
                 redirect: 'follow'
             };
 
-            fetch("http://localhost:1337/api/upload", requestOptions)
+            fetch(`${process.env.VUE_APP_URL}/api/upload`, requestOptions)
                 .then(response => response.text())
                 .then(result => {
                     this.userUpload = JSON.parse(result)
@@ -290,12 +293,11 @@ export default {
             }
             try {
 
-                const res = await axios.post(`http://localhost:1337/api/orders`,
+                const res = await axios.post(`${process.env.VUE_APP_URL}/api/orders`,
                     {
                         "data": {
                             OrderStatus: false,
-                            OrderName: "smthing1",
-                            service: this.checked,
+                            services: this.checked, // KS-FIXED: после переключения типа связи strapi переименовал в services (было service)
                         }
                     },
                     {
@@ -307,6 +309,7 @@ export default {
 
                 console.log(res);
                 const id = JSON.parse(JSON.stringify(res)).data.data.id
+                const dateOf = new Date(Date.parse(JSON.parse(JSON.stringify(res)).data.data.attributes.createdAt)).toLocaleString()
                 console.log("xxxxx", id)
 
                 var myHeaders = new Headers();
@@ -316,7 +319,8 @@ export default {
 
                 var raw = JSON.stringify({
                     "data": {
-                        "orderFile": smthUpload[0].id
+                        "orderFile": smthUpload[0].id,
+                        "OrderName": `Заказ № ${id} от ${dateOf}`
                     }
                 });
 
@@ -327,11 +331,13 @@ export default {
                     redirect: 'follow'
                 };
 
-                fetch(`http://localhost:1337/api/orders/${id}`, requestOptions)
+		// KS-FIXED: сделан await, чтобы ждал пока не закончит запрос перед reload
+                const response = await fetch(`${process.env.VUE_APP_URL}/api/orders/${id}`, requestOptions)
                     .then(response => response.text())
                     .then(result => console.log(result))
                     .catch(error => console.log('error', error));
-
+		await response;
+		// =============================
             }
 
             catch (error) {

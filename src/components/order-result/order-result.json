@@ -1,0 +1,12 @@
+{
+  "collectionName": "components_order_result_order_results",
+  "info": {
+    "displayName": "orderResult"
+  },
+  "options": {},
+  "attributes": {
+    "fileName": {
+      "type": "string"
+    }
+  }
+}

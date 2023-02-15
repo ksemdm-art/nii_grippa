@@ -24,7 +24,7 @@
     },
     "OrderName": {
       "type": "string",
-      "required": true
+      "required": false
     },
     "orderFile": {
       "type": "media",
@@ -40,19 +40,14 @@
       "target": "plugin::users-permissions.user",
       "inversedBy": "orders"
     },
-    "orderResult": {
-      "type": "media",
-      "multiple": true,
-      "required": false,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
-    },
     "fileName": {
       "type": "string"
+    },
+    "results": {
+      "displayName": "orderResult",
+      "type": "component",
+      "repeatable": true,
+      "component": "order-result.order-result"
     }
   }
 }

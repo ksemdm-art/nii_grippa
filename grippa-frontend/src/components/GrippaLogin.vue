@@ -72,7 +72,8 @@ export default {
             e.preventDefault()
 
             try {
-                const response = await axios.post('http://localhost:1337/api/auth/local',
+                console.log(process.env.VUE_APP_URL)
+                const response = await axios.post(`${process.env.VUE_APP_URL}/api/auth/local`,
                     {
                         identifier: this.username,
                         password: this.password
@@ -90,6 +91,7 @@ export default {
             } catch (error) {
                 this.error = true
                 this.password = ''
+                alert ("Неверный пароль")
             }
         },
     }

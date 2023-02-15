@@ -33,7 +33,7 @@ const store = createStore({
     },
     actions: {
         GET_USER_FROM_API({commit}){
-            return axios.get('http://localhost:1337/api/users/me',
+            return axios.get(`${process.env.VUE_APP_URL}/api/users/me`,
             {
                 headers:
                 {Authorization: 'Bearer ' + localStorage.getItem('jwt')
@@ -54,7 +54,7 @@ const store = createStore({
         },
 
         GET_ORDER_FROM_API({commit}){
-            return axios.get('http://localhost:1337/api/orders',
+            return axios.get(`${process.env.VUE_APP_URL}/api/orders`,
             {
                 headers:
                 {Authorization: 'Bearer ' + localStorage.getItem('jwt')
@@ -75,7 +75,7 @@ const store = createStore({
         },
 
         GET_UPLOAD_FROM_API({commit}){
-            return axios.get('http://localhost:1337/api/upload/files',
+            return axios.get(`${process.env.VUE_APP_URL}/api/upload/files`,
             {
                 headers:
                 {Authorization: 'Bearer ' + localStorage.getItem('jwt')
@@ -96,7 +96,7 @@ const store = createStore({
         },
 
         GET_ORG_FROM_API({commit}){
-            return axios.get('http://localhost:1337/api/organizations',
+            return axios.get(`${process.env.VUE_APP_URL}/api/organizations`,
             {
                 headers:
                 {Authorization: 'Bearer ' + localStorage.getItem('jwt')
@@ -117,7 +117,7 @@ const store = createStore({
         },
 
         GET_SERVICE_FROM_API({commit}){
-            return axios.get('http://localhost:1337/api/services',
+            return axios.get(`${process.env.VUE_APP_URL}/api/services`,
             {
                 headers:
                 {Authorization: 'Bearer ' + localStorage.getItem('jwt')
