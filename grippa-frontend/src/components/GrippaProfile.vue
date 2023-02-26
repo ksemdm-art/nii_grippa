@@ -6,7 +6,7 @@
             <div class="row justify-content-center align-items-center m-0" style="max-width: 100vw;">
                 <nav class="navbar navbar-expand-lg bg-body-tertiary navbar-dark bg-primary m-0">
                     <div class="container-fluid">
-                        <a class="navbar-brand" href="#">НИИ Гриппа</a>
+                        <a class="navbar-brand" href="#">Личный кабинет коллаборатора</a>
                         <button class="btn btn btn-outline-light" type="submit">
                             <span @click="logout">
                                 Выйти
@@ -116,10 +116,13 @@
                                                 Обрабатывается
                                             </div>
 
-                                            <div class="col-sm-3 text-secondary">
+                                            <div class="col-sm-3 text-secondary" style="text-align:center;">
                                                 <!-- <a v-bind:href="`http://localhost:1337` + getLinkByID(order.id)"
-                                                    v-if="getLinkByID(order.id) != ''">Данные результата</a> -->
-                                                   <a v-for="file in getLinksById(order.id)" :key="file.id" :href="file.fileName"> Данные результата {{ file.id }}<br></a>
+                                                    v-if="getLinkByID(order.id) != ''"> Данные результата </a> -->
+                                                <a v-for="file in getLinksById(order.id)" :key="file.id"
+                                                    :href="'/api/download/?file=' + file.fileName.hash"> {{
+                                                        file.fileName.name
+                                                    }} <br></a>
                                             </div>
                                         </div>
                                         <hr>
@@ -129,7 +132,7 @@
 
                             </div>
                             <div class="container d-flex justify-content-end m-0 p-0">
-                                <button class="col-2 btn btn btn-outline-primary" data-bs-toggle="modal"
+                                <button class="btn btn btn-outline-primary btn-lg" data-bs-toggle="modal"
                                     data-bs-target="#exampleModal">Создать заказ</button>
                             </div>
                         </div>
@@ -161,8 +164,8 @@
                                         id="v-model-multiple-checkboxes">
                                         <div v-show="service.attributes.ServiceStatus" class="form-check"
                                             style="padding-left: 2.5rem;">
-                                            <input class="form-check-input"  type="checkbox" id="check"
-                                                ref="theCheckbox" v-model="checked" :value="service.id">
+                                            <input class="form-check-input" type="checkbox" id="check" ref="theCheckbox"
+                                                v-model="checked" :value="service.id">
                                             <label class="form-check-label" for="flexCheckChecked" id="check_label">
                                                 {{ service.attributes.ServiceName }}
                                             </label>
@@ -179,22 +182,21 @@
                                     id="inputGroupFile02">
                             </div>
                             <div class="wrapper" style="display: flex; flex-direction: row; justify-content: end;">
-                                <!--KS-FIXED: type=submit переделан в type=button --><button type="button" class="btn btn-secondary" @click="sendFile()">Загрузить</button>
+                                <!--KS-FIXED: type=submit переделан в type=button --><button type="button"
+                                    class="btn btn-primary" @click="sendFile()">Загрузить</button>
                             </div>
                         </form>
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                        <!--KS-FIXED: type=submit переделан в type=button --><button @click="sendOrder()" type="button" class="btn btn-primary">Отправить</button>
+                        <button  type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <!--KS-FIXED: type=submit переделан в type=button --><button :disabled='isDisabled == 0'
+                            @click="sendOrder()" type="button" class="btn btn-primary">Отправить</button>
                     </div>
                 </div>
             </div>
         </div>
     </form>
-
-
-
 </template>
 
 <script>
@@ -220,8 +222,9 @@ export default {
             orgData: {},
             serviceData: {},
             checked: [],
-            userUpload: {}
-
+            userUpload: {},
+            terms: false,
+            fileIsLoaded: false
         }
     },
 
@@ -237,6 +240,21 @@ export default {
         console.log("res =", res);
 
     },
+    computed: {
+        isDisabled: function () {
+        // if длина списка checked !=0 И есть имя файла
+        // return true
+        // else return false
+        // return !this.terms;
+            console.log(this.userUpload)
+        if(this.checked.length == true && this.fileIsLoaded == true){
+            return true
+        }
+        else{
+            return false
+        }
+    }
+    },
     methods: {
         logout() {
             localStorage.removeItem('jwt')
@@ -244,7 +262,6 @@ export default {
         },
         getLinksById(id) {
             const order = JSON.parse(JSON.stringify(Object.values(this.orderData).filter(order => order.id == id)[0]))
-            console.log("links", order.attributes.results)
             return order.attributes.results
         },
 
@@ -277,7 +294,7 @@ export default {
                     this.userUpload = JSON.parse(result)
                     console.log(this.userUpload)
                     alert("Файл прикреплен к заказу")
-
+                    this.fileIsLoaded = true
                 })
                 .catch(error => console.log('error', error));
 
@@ -285,12 +302,7 @@ export default {
         },
 
         async sendOrder() {
-            
-            console.log("++++++",this.checked)
 
-            if(document.getElementById('check').checked){
-                console.log("+")
-            }
             try {
 
                 const res = await axios.post(`${process.env.VUE_APP_URL}/api/orders`,
@@ -331,13 +343,16 @@ export default {
                     redirect: 'follow'
                 };
 
-		// KS-FIXED: сделан await, чтобы ждал пока не закончит запрос перед reload
+                // KS-FIXED: сделан await, чтобы ждал пока не закончит запрос перед reload
                 const response = await fetch(`${process.env.VUE_APP_URL}/api/orders/${id}`, requestOptions)
                     .then(response => response.text())
-                    .then(result => console.log(result))
+                    .then((result) =>{
+                        console.log(result)
+                        this.fileIsLoaded = false
+                    }  )
                     .catch(error => console.log('error', error));
-		await response;
-		// =============================
+                await response;
+                // =============================
             }
 
             catch (error) {
@@ -356,6 +371,8 @@ export default {
         return new Object(data2)
     },
     async mounted() {
+
+        if (!localStorage.getItem('jwt')) this.logout();
 
         const userData = { ...await this.$store.dispatch('GET_USER_FROM_API') }
         console.log("userData", userData)

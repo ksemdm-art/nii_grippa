@@ -2,13 +2,13 @@
     <section>
         <nav class="navbar navbar-expand-lg bg-body-tertiary navbar-dark bg-primary">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">НИИ Гриппа</a>
+                <a class="navbar-brand" href="#">Личный кабинет коллаборатора</a>
             </div>
         </nav>
         <div class="container-fluid">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-md-9 col-lg-6 col-xl-5">
-                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                    <img src="../assets/logo_grippa.png"
                         class="img-fluid" alt="Sample image">
                 </div>
                 <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">

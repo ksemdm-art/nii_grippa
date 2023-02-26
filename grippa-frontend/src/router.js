@@ -6,6 +6,9 @@ export default createRouter({
     history: createWebHashHistory(),
     routes: [
         {
+            path: '/', component: GrippaProfile
+        },
+        {
             path: '/login', component: GrippaLogin
         },
         {
