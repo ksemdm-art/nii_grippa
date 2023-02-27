@@ -1,6 +1,7 @@
 'use strict';
 
 var fs = require('fs');
+const cryptr = require('cryptr');
 
 /**
  * order controller
@@ -28,26 +29,14 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
             populate: '*'
         });
         console.log(entitries)
-        const partPath = "D:/coding/testingFiles/"
         const sanitizedEntity = await this.sanitizeOutput(entitries.map(el => {
             el.results.map(file => {
                 try {
-                    const fs = require('fs')
-                    const contents = fs.readFileSync(partPath + file.fileName, { encoding: 'base64' })
-                    const fileExt = file.fileName.split(".")[1].toLowerCase()
-                    if(fileExt == "csv"){
-                        file.fileName = "data:text/plain;charset=UTF-8;base64," + contents
-                    }
-
-                    if(fileExt == "xls"){
-                        file.fileName = "data:application/vnd.ms-excel;base64," + contents
-                    }
-
-                    if(fileExt == "xlsx"){
-                        file.fileName = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64," + contents
-                    }
-
-                    
+			const cr = new cryptr(process.env.FILE_SECRET_KEY);
+			const fn = file.fileName;
+			file.fileName = {name:"", hash:""};
+			file.fileName.name = fn;
+			file.fileName.hash = cr.encrypt(fn);
                 }
                 catch (e) {
                     console.log(e)
@@ -57,16 +46,6 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
             return el
         }), ctx);
 
-
-        // const partPath = "D:/coding/testingFiles/"
-
-        // try {
-        //     const result = fs.readFileSync(fileName, { encoding: "utf-8" });
-
-        //     console.log(result);
-        //   } catch (err) {
-        //     console.error(err);
-        //   }
 
         return this.transformResponse(sanitizedEntity);
     },

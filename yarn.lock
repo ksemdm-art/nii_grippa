@@ -3915,6 +3915,11 @@
   "resolved" "https://registry.npmjs.org/crypto-random-string/-/crypto-random-string-2.0.0.tgz"
   "version" "2.0.0"
 
+"cryptr@^6.1.0":
+  "integrity" "sha512-vJBrDcKAZ/OpMW4EptbGTD2EfNEywh6QtsPDX5kd2u1MNBmTLGC3IlOoRh8Ov7dmZhFfRjUJ07u4eCoJ8+oM9A=="
+  "resolved" "https://registry.npmjs.org/cryptr/-/cryptr-6.1.0.tgz"
+  "version" "6.1.0"
+
 "css-color-keywords@^1.0.0":
   "integrity" "sha512-FyyrDHZKEjXDpNJYvVsV960FiqQyXc/LlYmsxl2BcdMb2WPx0OGRVgTg55rPSyLSNMqP52R9r8geSp7apN3Ofg=="
   "resolved" "https://registry.npmjs.org/css-color-keywords/-/css-color-keywords-1.0.0.tgz"
