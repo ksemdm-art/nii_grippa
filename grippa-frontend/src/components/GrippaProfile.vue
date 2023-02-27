@@ -242,11 +242,7 @@ export default {
     },
     computed: {
         isDisabled: function () {
-        // if длина списка checked !=0 И есть имя файла
-        // return true
-        // else return false
-        // return !this.terms;
-            console.log(this.userUpload)
+            //console.log(this.userUpload)
         if(this.checked.length == true && this.fileIsLoaded == true){
             return true
         }
@@ -267,7 +263,7 @@ export default {
 
         formatDate(id) {
             const order = JSON.parse(JSON.stringify(Object.values(this.orderData).filter(order => order.id == id)[0]))
-            return (new Date(Date.parse(order.attributes.createdAt))).toLocaleDateString()
+            return (new Date(Date.parse(order.attributes.createdAt)).toLocaleString("ru-RU", { hour12: false }))
         },
 
         async sendFile() {
@@ -292,11 +288,19 @@ export default {
                 .then(response => response.text())
                 .then(result => {
                     this.userUpload = JSON.parse(result)
-                    console.log(this.userUpload)
-                    alert("Файл прикреплен к заказу")
+                    let ext = formdata.get('files').name.split('.')[1]
+                    // //console.log(ext)
+                    if (ext == 'csv' || ext == 'xls' || ext == 'xlsx') {
+                        alert("Файл прикреплен к заказу")
+                    }
+                    else{
+                        alert("Прикрепите файл в формате csv, xls или xlsx")
+                    }
+                    // //console.log(this.userUpload)
+                    
                     this.fileIsLoaded = true
                 })
-                .catch(error => console.log('error', error));
+                .catch(error => alert('Ошибка: ', error));
 
 
         },
@@ -319,10 +323,10 @@ export default {
 
                     });
 
-                console.log(res);
+                //console.log(res);
                 const id = JSON.parse(JSON.stringify(res)).data.data.id
                 const dateOf = new Date(Date.parse(JSON.parse(JSON.stringify(res)).data.data.attributes.createdAt)).toLocaleString()
-                console.log("xxxxx", id)
+                //console.log("xxxxx", id)
 
                 var myHeaders = new Headers();
                 myHeaders.append("Authorization", 'Bearer ' + localStorage.getItem('jwt'));
@@ -357,7 +361,7 @@ export default {
 
             catch (error) {
                 return alert(
-                    "Something went wrong :("
+                    "Не удалось отправить заказ"
                 );
             }
 
@@ -375,24 +379,24 @@ export default {
         if (!localStorage.getItem('jwt')) this.logout();
 
         const userData = { ...await this.$store.dispatch('GET_USER_FROM_API') }
-        console.log("userData", userData)
+        //console.log("userData", userData)
         this.userData = userData
-        console.log("this", this.userData.username)
+        //console.log("this", this.userData.username)
 
         const orderData = { ...await this.$store.dispatch('GET_ORDER_FROM_API') }
-        console.log("orderData", orderData)
+        //console.log("orderData", orderData)
         this.orderData = orderData
 
         const uploadData = { ...await this.$store.dispatch('GET_UPLOAD_FROM_API') }
-        console.log("uploadData", uploadData)
+        //console.log("uploadData", uploadData)
         this.uploadData = uploadData
 
         const orgData = { ...await this.$store.dispatch('GET_ORG_FROM_API') }
-        console.log("orgData", orgData)
+        //console.log("orgData", orgData)
         this.orgData = orgData
 
         const serviceData = { ...await this.$store.dispatch('GET_SERVICE_FROM_API') }
-        console.log("serviceData", serviceData)
+        //console.log("serviceData", serviceData)
         this.serviceData = serviceData
 
     },
