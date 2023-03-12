@@ -263,7 +263,8 @@ export default {
 
         formatDate(id) {
             const order = JSON.parse(JSON.stringify(Object.values(this.orderData).filter(order => order.id == id)[0]))
-            return (new Date(Date.parse(order.attributes.createdAt)).toLocaleString("ru-RU", { hour12: false }))
+            var a = new Date(Date.parse(order.attributes.createdAt)).toLocaleTimeString("ru-RU", {hour: '2-digit', minute:'2-digit'})
+            return (`${new Date(Date.parse(order.attributes.createdAt)).toLocaleDateString("ru-RU")} ${a}`)
         },
 
         async sendFile() {
@@ -291,16 +292,22 @@ export default {
                     let ext = formdata.get('files').name.split('.')[1]
                     // //console.log(ext)
                     if (ext == 'csv' || ext == 'xls' || ext == 'xlsx') {
+                        if (this.checked.length){
                         alert("Файл прикреплен к заказу")
+                        this.fileIsLoaded = true
+                        }
+                        else{
+                            alert("Выберите одну или несколько услуг")
+                        }
                     }
                     else{
                         alert("Прикрепите файл в формате csv, xls или xlsx")
+                        this.fileIsLoaded = false
                     }
                     // //console.log(this.userUpload)
                     
-                    this.fileIsLoaded = true
                 })
-                .catch(error => alert('Ошибка: ', error));
+                .catch(error => alert('Ошибка: файл не выбран', error));
 
 
         },
@@ -325,8 +332,9 @@ export default {
 
                 //console.log(res);
                 const id = JSON.parse(JSON.stringify(res)).data.data.id
-                const dateOf = new Date(Date.parse(JSON.parse(JSON.stringify(res)).data.data.attributes.createdAt)).toLocaleString()
+                const dateOf = new Date(Date.parse(JSON.parse(JSON.stringify(res)).data.data.attributes.createdAt)).toLocaleDateString('ru-RU')
                 //console.log("xxxxx", id)
+                var a = new Date();
 
                 var myHeaders = new Headers();
                 myHeaders.append("Authorization", 'Bearer ' + localStorage.getItem('jwt'));
@@ -336,10 +344,9 @@ export default {
                 var raw = JSON.stringify({
                     "data": {
                         "orderFile": smthUpload[0].id,
-                        "OrderName": `Заказ № ${id} от ${dateOf}`
+                        "OrderName": `Заказ № ${id} от ${dateOf} ${a.getHours()}:${(a.getMinutes()<10?'0':'') + a.getMinutes()}`
                     }
                 });
-
                 var requestOptions = {
                     method: 'PUT',
                     headers: myHeaders,

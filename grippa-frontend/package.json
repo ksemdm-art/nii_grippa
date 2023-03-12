@@ -14,6 +14,7 @@
     "core-js": "^3.8.3",
     "global": "^4.4.0",
     "vue": "^3.2.13",
+    "vue-datetime-formatter": "^0.1.6",
     "vue-router": "^4.1.6",
     "vuex": "^4.0.2"
   },
